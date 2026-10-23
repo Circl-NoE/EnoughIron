@@ -1,4 +1,5 @@
 ﻿using Alta;
+using Alta.Blacksmithing;
 using Alta.Networking;
 using MelonLoader;
 using System;
@@ -19,38 +20,54 @@ namespace EnoughIron
         {
             MelonLogger.Msg("Trying to make handles better lol");
 
-            GameObject BigMetal = (GameObject)Resources.Load("network prefabs/crafting/handles/Handle Large Cool");
+            ChangeHandle((GameObject)Resources.Load("network prefabs/crafting/handles/Handle Large Cool"));
+            ChangeHandle((GameObject)Resources.Load("network prefabs/crafting/handles/Handle Medium Cool"));
+            ChangeHandle((GameObject)Resources.Load("network prefabs/crafting/handles/Handle Short Cool"));
+            ChangeHandle((GameObject)Resources.Load("network prefabs/crafting/handles/Handle Fist"));
+            ChangeHandle((GameObject)Resources.Load("network prefabs/crafting/handles/Handle Medium Curved"));
+            ChangeHandle((GameObject)Resources.Load("network prefabs/crafting/handles/Handle Short C Curve"));
+            ChangeHandle((GameObject)Resources.Load("network prefabs/crafting/handles/Handle Short Pointy End"));
 
-            MelonLogger.Msg("Got game object");
+            MelonLogger.Msg("Success");
+        }
 
-            PhysicalMaterialPart part = BigMetal.AddComponent<PhysicalMaterialPart>();
-
-            MelonLogger.Msg("Added physicalmaterialpart");
+        internal static void ChangeHandle(GameObject handle)
+        {
+            PhysicalMaterialPart part = handle.AddComponent<PhysicalMaterialPart>();
 
             part.physicalMaterial = HashedGeneralValue<PhysicalMaterial>.Get(1u);
 
-            MelonLogger.Msg("Set default material to iron");
-
             part.materialChannel = PhysicalMaterialChannel.A;
 
-            MelonLogger.Msg("Set material channel to A");
-
-            MeshRenderer[] renders = BigMetal.GetComponentsInChildren<MeshRenderer>().Where(c =>  c.gameObject.name.Contains("metal_handle") && !c.gameObject.name.Contains("wrap")).ToArray();
-
-            MelonLogger.Msg("Got list of renderers");
+            MeshRenderer[] renders = handle.GetComponentsInChildren<MeshRenderer>().Where(c => c.gameObject.name.Contains("_handle") && !c.gameObject.name.Contains("wrap") && !c.gameObject.name.Contains("grab")).ToArray();
 
             part.renderers = renders;
 
-            MelonLogger.Msg("Applied renderers");
-
-            NetworkEntity entity = BigMetal.GetComponent<NetworkEntity>();
+            NetworkEntity entity = handle.GetComponent<NetworkEntity>();
             List<MonoBehaviour> behaviours = entity.networkEntityBehaviours.ToList();
             behaviours.Add(part);
             entity.networkEntityBehaviours = behaviours.ToArray();
 
             part.entity = entity;
 
-            MelonLogger.Msg("Success");
+            BasicMeltingModel basicMelt = handle.GetComponent<BasicMeltingModel>();
+            MeltingModelPart melt = handle.AddComponent<MeltingModelPart>();
+
+            melt.entity = entity;
+            melt.androidMeshFilter = basicMelt.androidMeshFilter;
+            melt.heatPointCollection = basicMelt.heatPointCollection;
+            melt.modifiers = basicMelt.modifiers;
+            melt.mainMeshFilter = basicMelt.mainMeshFilter;
+            melt.ingotValue = basicMelt.ingotValue;
+            melt.istriggeringAbilities = basicMelt.istriggeringAbilities;
+
+            melt.physicalMaterialPart = part;
+
+            MeltingHeatPoint heatPoint = handle.GetComponentInChildren<MeltingHeatPoint>();
+
+            heatPoint.meltingModel = melt;
+
+            GameObject.Destroy(basicMelt);
         }
     }
 }
