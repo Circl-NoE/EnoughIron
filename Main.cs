@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-[assembly : MelonInfo(typeof(EnoughIron.Main), "Enough Iron!", "0.0.1", "Circl")]
+[assembly : MelonInfo(typeof(EnoughIron.Main), "Enough Iron!", "1.0.0", "Circl")]
 
 namespace EnoughIron
 {
