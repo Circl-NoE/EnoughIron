@@ -3,13 +3,9 @@ using Alta.Blacksmithing;
 using Alta.Caves;
 using Alta.Networking;
 using MelonLoader;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 [assembly : MelonInfo(typeof(EnoughIron.Main), "Enough Iron!", "1.0.0", "Circl")]
 
