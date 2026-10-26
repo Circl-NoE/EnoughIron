@@ -29,10 +29,13 @@ namespace EnoughIron
 
             ChangeItem((GameObject)Resources.Load("network prefabs/props/combat/Small Shield"), "_metal", "wraps", false);
 
+            GameObject mBow = ChangeItem((GameObject)Resources.Load("network prefabs/props/combat/Metal Bow"), "metal_", "wraps", false);
+            mBow.GetComponentInChildren<Shooter>().physicalMaterial = mBow.GetComponent<PhysicalMaterialPart>();
+
             MelonLogger.Msg("Success");
         }
 
-        internal static void ChangeItem(GameObject handle, string include, string exclude, bool includeMelt = true)
+        internal static GameObject ChangeItem(GameObject handle, string include, string exclude, bool includeMelt = true)
         {
             PhysicalMaterialPart part = handle.AddComponent<PhysicalMaterialPart>();
 
@@ -40,7 +43,7 @@ namespace EnoughIron
 
             part.materialChannel = PhysicalMaterialChannel.A;
 
-            MeshRenderer[] renders = handle.GetComponentsInChildren<MeshRenderer>().Where(c => c.gameObject.name.Contains(include) && !c.gameObject.name.Contains(exclude)).ToArray();
+            Renderer[] renders = handle.GetComponentsInChildren<Renderer>().Where(c => c.gameObject.name.Contains(include) && !c.gameObject.name.Contains(exclude)).ToArray();
 
             part.renderers = renders;
 
@@ -74,6 +77,8 @@ namespace EnoughIron
 
                 GameObject.Destroy(basicMelt);
             }
+
+            return handle;
         }
     }
 }
