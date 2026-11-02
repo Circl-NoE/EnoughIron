@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1B225AAE-8342-46AB-B0CE-F0A6E1364129}</ProjectGuid>
+    <ProjectGuid>{6E78C266-21E1-073B-4D85-4D5213FFB0D8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EnoughIron</RootNamespace>

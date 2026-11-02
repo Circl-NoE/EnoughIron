@@ -1,13 +1,14 @@
 ﻿using Alta;
 using Alta.Blacksmithing;
 using Alta.Caves;
+using Alta.Impact;
 using Alta.Networking;
 using MelonLoader;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[assembly : MelonInfo(typeof(EnoughIron.Main), "Enough Iron!", "1.0.0", "Circl")]
+[assembly : MelonInfo(typeof(EnoughIron.Main), "Enough Iron!", "1.0.1", "Circl")]
 
 namespace EnoughIron
 {
@@ -40,6 +41,12 @@ namespace EnoughIron
 
             part.materialChannel = PhysicalMaterialChannel.A;
 
+            part.impactors = new ImpactGenerator[0];
+
+            part.listenToPhysicalMaterial = new MonoBehaviour[0];
+
+            part.durabilityModule = handle.GetComponent<DurabilityModule>();
+
             MeshRenderer[] renders = handle.GetComponentsInChildren<MeshRenderer>().Where(c => c.gameObject.name.Contains(include) && !c.gameObject.name.Contains(exclude)).ToArray();
 
             part.renderers = renders;
@@ -47,7 +54,6 @@ namespace EnoughIron
             NetworkEntity entity = handle.GetComponent<NetworkEntity>();
             List<MonoBehaviour> behaviours = entity.networkEntityBehaviours.ToList();
             behaviours.Add(part);
-            entity.networkEntityBehaviours = behaviours.ToArray();
 
             part.entity = entity;
 
@@ -72,8 +78,12 @@ namespace EnoughIron
 
                 heatPoint.meltingModel = melt;
 
+                behaviours[behaviours.IndexOf(basicMelt)] = melt;
+
                 GameObject.Destroy(basicMelt);
             }
+
+            entity.networkEntityBehaviours = behaviours.ToArray();
         }
     }
 }
