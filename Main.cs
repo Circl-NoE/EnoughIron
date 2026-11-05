@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[assembly : MelonInfo(typeof(EnoughIron.Main), "Enough Iron!", "1.0.1-Q", "Circl")]
+[assembly : MelonInfo(typeof(EnoughIron.Main), "Enough Iron!", "1.0.2-Q", "Circl")]
 
 namespace EnoughIron
 {
@@ -27,14 +27,14 @@ namespace EnoughIron
             ChangeItem(Resources.Load<GameObject>("network prefabs/crafting/handles/Handle Short C Curve"), "_handle", "wrap");
             ChangeItem(Resources.Load<GameObject>("network prefabs/crafting/handles/Handle Short Pointy End"), "_handle", "wrap");
 
-            ChangeItem(Resources.Load<GameObject>("network prefabs/props/combat/Shield"), "_metal", "wraps", false);
+            ChangeItem(Resources.Load<GameObject>("network prefabs/props/combat/Shield"), "_metal", "wraps");
 
-            ChangeItem(Resources.Load<GameObject>("network prefabs/props/combat/Small Shield"), "_metal", "wraps", false);
+            ChangeItem(Resources.Load<GameObject>("network prefabs/props/combat/Small Shield"), "_metal", "wraps");
 
             MelonLogger.Msg("Success");
         }
 
-        internal static void ChangeItem(GameObject handle, string include, string exclude, bool includeMelt = true)
+        internal static void ChangeItem(GameObject handle, string include, string exclude)
         {
             MelonLogger.Msg($"Modifying {handle.name}");
             Il2Cpp.PhysicalMaterialPart part = handle.AddComponent<Il2Cpp.PhysicalMaterialPart>();
@@ -60,30 +60,6 @@ namespace EnoughIron
             part.entity = entity;
 
             part.materialDistribution = Resources.Load<Distribution>("distributions/Metal Material Distribution");
-
-            if (includeMelt)
-            {
-                BasicMeltingModel basicMelt = handle.GetComponent<BasicMeltingModel>();
-                MeltingModelPart melt = handle.AddComponent<MeltingModelPart>();
-
-                melt.entity = entity;
-                melt.androidMeshFilter = basicMelt.androidMeshFilter;
-                melt.heatPointCollection = basicMelt.heatPointCollection;
-                melt.modifiers = basicMelt.modifiers;
-                melt.mainMeshFilter = basicMelt.mainMeshFilter;
-                melt.ingotValue = basicMelt.ingotValue;
-                melt.istriggeringAbilities = basicMelt.istriggeringAbilities;
-
-                melt.physicalMaterialPart = part;
-
-                MeltingHeatPoint heatPoint = handle.GetComponentInChildren<MeltingHeatPoint>();
-
-                heatPoint.meltingModel = melt;
-
-                behaviours[behaviours.IndexOf(basicMelt)] = melt;
-
-                GameObject.Destroy(basicMelt);
-            }
 
             entity.networkEntityBehaviours = behaviours.ToArray();
         }
