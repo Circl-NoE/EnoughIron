@@ -62,6 +62,8 @@
     <Compile Include="MetalBowAppearance.cs" />
     <Compile Include="MetalBowBehaviour.cs" />
     <Compile Include="MetalBowInstances.cs" />
+    <Compile Include="MetalBowMouldAppearance.cs" />
+    <Compile Include="MetalBowMoulds.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

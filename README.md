@@ -10,6 +10,8 @@ Adds the component that any texturable item uses to set its material to the iron
 
 ## Metal bows
 
+Put a blank mould and a bare stock Metal Bow into the standard mould press. Pulling the lever consumes the donor bow and leaves a Metal Bow Mould. The standard crafted mould has three uses. Each cast takes 8 ingots of one unlocked metal and produces one whole bow in that metal.
+
 Cave loot uses the existing metal distribution. Plain spawns start in Iron, and the game saves the bow's material.
 
 Arrow impact damage and draw response both use the bow metal's damage stat relative to Iron. Iron matches the stock bow. Copper has 0.7× the damage and draw response of Iron, while Mythril has 2.5×. These comparisons use the same arrow and draw strength.

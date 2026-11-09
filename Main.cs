@@ -15,6 +15,7 @@ namespace EnoughIron
     public class Main : MelonMod
     {
         private HarmonyLib.Harmony metalBowHarmony;
+        private HarmonyLib.Harmony metalBowMouldHarmony;
 
         public override void OnInitializeMelon()
         {
@@ -33,12 +34,15 @@ namespace EnoughIron
             ChangeItem((GameObject)Resources.Load("network prefabs/props/combat/Small Shield"), "_metal", "wraps", false);
 
             InstallMetalBows();
+            if (metalBowHarmony != null)
+                InstallMetalBowMould();
 
             MelonLogger.Msg("Success");
         }
 
         public override void OnDeinitializeMelon()
         {
+            metalBowMouldHarmony?.UnpatchSelf();
             metalBowHarmony?.UnpatchSelf();
         }
 
@@ -56,6 +60,21 @@ namespace EnoughIron
             {
                 harmony.UnpatchSelf();
                 MelonLogger.Error("ENOUGH_IRON_BOWS_START_FAILED " + exception);
+            }
+        }
+
+        private void InstallMetalBowMould()
+        {
+            var harmony = new HarmonyLib.Harmony(HarmonyInstance.Id + ".MetalBowMould");
+            try
+            {
+                MetalBowMoulds.Install(harmony);
+                metalBowMouldHarmony = harmony;
+            }
+            catch (Exception exception)
+            {
+                harmony.UnpatchSelf();
+                MelonLogger.Error("ENOUGH_IRON_BOW_MOULD_START_FAILED " + exception);
             }
         }
 
