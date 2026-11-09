@@ -3,6 +3,7 @@ using Alta.Blacksmithing;
 using Alta.Caves;
 using Alta.Networking;
 using MelonLoader;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,6 +14,8 @@ namespace EnoughIron
 {
     public class Main : MelonMod
     {
+        private HarmonyLib.Harmony metalBowHarmony;
+
         public override void OnInitializeMelon()
         {
             MelonLogger.Msg("Giving the game an iron deficiency");
@@ -29,10 +32,31 @@ namespace EnoughIron
 
             ChangeItem((GameObject)Resources.Load("network prefabs/props/combat/Small Shield"), "_metal", "wraps", false);
 
-            GameObject mBow = ChangeItem((GameObject)Resources.Load("network prefabs/props/combat/Metal Bow"), "metal_", "wraps", false);
-            mBow.GetComponentInChildren<Shooter>().physicalMaterial = mBow.GetComponent<PhysicalMaterialPart>();
+            InstallMetalBows();
 
             MelonLogger.Msg("Success");
+        }
+
+        public override void OnDeinitializeMelon()
+        {
+            metalBowHarmony?.UnpatchSelf();
+        }
+
+        private void InstallMetalBows()
+        {
+            // Keep partial bow patch failures isolated from the rest of the mod.
+            var harmony = new HarmonyLib.Harmony(HarmonyInstance.Id + ".MetalBows");
+            try
+            {
+                BowShotDamage.Install(harmony);
+                MetalBowInstances.Install(harmony);
+                metalBowHarmony = harmony;
+            }
+            catch (Exception exception)
+            {
+                harmony.UnpatchSelf();
+                MelonLogger.Error("ENOUGH_IRON_BOWS_START_FAILED " + exception);
+            }
         }
 
         internal static GameObject ChangeItem(GameObject handle, string include, string exclude, bool includeMelt = true)

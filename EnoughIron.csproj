@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\..\alta\A Township Talemod\MelonLoader\net35\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="Alta.Values-lobotomized">
       <HintPath>..\dependancies\Alta.Values-lobotomized.dll</HintPath>
     </Reference>
@@ -54,7 +57,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BowShotDamage.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="MetalBowAppearance.cs" />
+    <Compile Include="MetalBowBehaviour.cs" />
+    <Compile Include="MetalBowInstances.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
