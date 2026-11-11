@@ -16,6 +16,7 @@ namespace EnoughIron
     {
         private HarmonyLib.Harmony metalBowHarmony;
         private HarmonyLib.Harmony metalBowMouldHarmony;
+        private HarmonyLib.Harmony metalBowRecyclingHarmony;
 
         public override void OnInitializeMelon()
         {
@@ -35,13 +36,17 @@ namespace EnoughIron
 
             InstallMetalBows();
             if (metalBowHarmony != null)
+            {
                 InstallMetalBowMould();
+                InstallMetalBowRecycling();
+            }
 
             MelonLogger.Msg("Success");
         }
 
         public override void OnDeinitializeMelon()
         {
+            metalBowRecyclingHarmony?.UnpatchSelf();
             metalBowMouldHarmony?.UnpatchSelf();
             metalBowHarmony?.UnpatchSelf();
         }
@@ -75,6 +80,21 @@ namespace EnoughIron
             {
                 harmony.UnpatchSelf();
                 MelonLogger.Error("ENOUGH_IRON_BOW_MOULD_START_FAILED " + exception);
+            }
+        }
+
+        private void InstallMetalBowRecycling()
+        {
+            var harmony = new HarmonyLib.Harmony(HarmonyInstance.Id + ".MetalBowRecycling");
+            try
+            {
+                MetalBowRecycling.Install(harmony);
+                metalBowRecyclingHarmony = harmony;
+            }
+            catch (Exception exception)
+            {
+                harmony.UnpatchSelf();
+                MelonLogger.Error("ENOUGH_IRON_BOW_RECYCLING_START_FAILED " + exception);
             }
         }
 
