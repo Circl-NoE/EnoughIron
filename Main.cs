@@ -3,6 +3,7 @@ using Alta.Blacksmithing;
 using Alta.Caves;
 using Alta.Networking;
 using MelonLoader;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -13,6 +14,10 @@ namespace EnoughIron
 {
     public class Main : MelonMod
     {
+        private HarmonyLib.Harmony metalBowHarmony;
+        private HarmonyLib.Harmony metalBowMouldHarmony;
+        private HarmonyLib.Harmony metalBowRecyclingHarmony;
+
         public override void OnInitializeMelon()
         {
             MelonLogger.Msg("Giving the game an iron deficiency");
@@ -29,10 +34,68 @@ namespace EnoughIron
 
             ChangeItem((GameObject)Resources.Load("network prefabs/props/combat/Small Shield"), "_metal", "wraps", false);
 
-            GameObject mBow = ChangeItem((GameObject)Resources.Load("network prefabs/props/combat/Metal Bow"), "metal_", "wraps", false);
-            mBow.GetComponentInChildren<Shooter>().physicalMaterial = mBow.GetComponent<PhysicalMaterialPart>();
+            InstallMetalBows();
+            if (metalBowHarmony != null)
+            {
+                InstallMetalBowMould();
+                InstallMetalBowRecycling();
+            }
 
             MelonLogger.Msg("Success");
+        }
+
+        public override void OnDeinitializeMelon()
+        {
+            metalBowRecyclingHarmony?.UnpatchSelf();
+            metalBowMouldHarmony?.UnpatchSelf();
+            metalBowHarmony?.UnpatchSelf();
+        }
+
+        private void InstallMetalBows()
+        {
+            // Keep partial bow patch failures isolated from the rest of the mod.
+            var harmony = new HarmonyLib.Harmony(HarmonyInstance.Id + ".MetalBows");
+            try
+            {
+                BowShotDamage.Install(harmony);
+                MetalBowInstances.Install(harmony);
+                metalBowHarmony = harmony;
+            }
+            catch (Exception exception)
+            {
+                harmony.UnpatchSelf();
+                MelonLogger.Error("ENOUGH_IRON_BOWS_START_FAILED " + exception);
+            }
+        }
+
+        private void InstallMetalBowMould()
+        {
+            var harmony = new HarmonyLib.Harmony(HarmonyInstance.Id + ".MetalBowMould");
+            try
+            {
+                MetalBowMoulds.Install(harmony);
+                metalBowMouldHarmony = harmony;
+            }
+            catch (Exception exception)
+            {
+                harmony.UnpatchSelf();
+                MelonLogger.Error("ENOUGH_IRON_BOW_MOULD_START_FAILED " + exception);
+            }
+        }
+
+        private void InstallMetalBowRecycling()
+        {
+            var harmony = new HarmonyLib.Harmony(HarmonyInstance.Id + ".MetalBowRecycling");
+            try
+            {
+                MetalBowRecycling.Install(harmony);
+                metalBowRecyclingHarmony = harmony;
+            }
+            catch (Exception exception)
+            {
+                harmony.UnpatchSelf();
+                MelonLogger.Error("ENOUGH_IRON_BOW_RECYCLING_START_FAILED " + exception);
+            }
         }
 
         internal static GameObject ChangeItem(GameObject handle, string include, string exclude, bool includeMelt = true)
